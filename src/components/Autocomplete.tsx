@@ -1,35 +1,41 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Person } from '../types/Person';
-import cn from 'classNames';
+import cn from 'classnames';
 
 interface Props {
   peoples: Person[];
-  handleHumanPick: (person: Person | null) => void;
+  onSelected: (person: Person | null) => void;
   query: string;
-  handleQueryChange: (query: string) => void;
+  onQueryChange: (query: string) => void;
 }
 
 const Autocomplete: React.FC<Props> = ({
   peoples,
-  handleHumanPick,
+  onSelected,
   query,
-  handleQueryChange,
+  onQueryChange,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [debouncedQuery, setDebouncedQuery] = useState(query);
 
   const filteredPeoples = peoples.filter(person =>
-    person.name.toLowerCase().includes(query.toLowerCase()),
+    person.name.toLowerCase().includes(debouncedQuery.toLowerCase().trim()),
   );
 
-  const handleSelect = (person: Person) => {
-    handleHumanPick(person);
-    handleQueryChange(person.name);
-    setIsOpen(false);
-  };
+  useEffect(() => {
+    const timerId = setTimeout(() => {
+      setDebouncedQuery(query);
+    }, 300);
 
-  const onChange = event => {
-    handleQueryChange(event.target.value);
-    setIsOpen(true);
+    return () => {
+      clearTimeout(timerId);
+    };
+  }, [query]);
+
+  const handleSelect = (person: Person) => {
+    onSelected(person);
+    onQueryChange(person.name);
+    setIsOpen(false);
   };
 
   const showNoResults = isOpen && query && filteredPeoples.length === 0;
@@ -45,7 +51,7 @@ const Autocomplete: React.FC<Props> = ({
             className="input"
             data-cy="search-input"
             onFocus={() => setIsOpen(true)}
-            onChange={event => onChange(event)}
+            onChange={event => onQueryChange(event.target.value)}
             onBlur={() => setTimeout(() => setIsOpen(false), 200)}
           />
         </div>

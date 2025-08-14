@@ -2,12 +2,13 @@ import React, { useState } from 'react';
 import './App.scss';
 import { peopleFromServer } from './data/people';
 import Autocomplete from './components/Autocomplete';
+import { Person } from './types/Person';
 
 export const App: React.FC = () => {
-  const [currentHuman, setCurrentHuman] = useState(null);
+  const [currentHuman, setCurrentHuman] = useState<Person | null>(null);
   const [query, setQuery] = useState('');
 
-  const handleHumanPick = person => {
+  const handleHumanPick = (person: Person) => {
     setCurrentHuman(person);
   };
 
@@ -29,24 +30,10 @@ export const App: React.FC = () => {
 
         <Autocomplete
           peoples={peopleFromServer}
-          handleHumanPick={handleHumanPick}
+          onSelected ={handleHumanPick}
           query={query}
-          handleQueryChange={handleQueryChange}
+          onQueryChange={handleQueryChange}
         />
-
-        {/* <div
-          className="
-            notification
-            is-danger
-            is-light
-            mt-3
-            is-align-self-flex-start
-          "
-          role="alert"
-          data-cy="no-suggestions-message"
-        >
-          <p className="has-text-danger">No matching suggestions</p>
-        </div> */}
       </main>
     </div>
   );
