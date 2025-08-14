@@ -4,6 +4,8 @@ import { peopleFromServer } from './data/people';
 import Autocomplete from './components/Autocomplete';
 import { Person } from './types/Person';
 
+const debounceDelay = 300;
+
 export const App: React.FC = () => {
   const [currentHuman, setCurrentHuman] = useState<Person | null>(null);
   const [query, setQuery] = useState('');
@@ -30,9 +32,10 @@ export const App: React.FC = () => {
 
         <Autocomplete
           peoples={peopleFromServer}
-          onSelected ={handleHumanPick}
+          onSelected={handleHumanPick}
           query={query}
           onQueryChange={handleQueryChange}
+          debounceDelay={debounceDelay}
         />
       </main>
     </div>

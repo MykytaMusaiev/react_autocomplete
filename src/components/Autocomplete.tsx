@@ -1,12 +1,13 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Person } from '../types/Person';
 import cn from 'classnames';
 
 interface Props {
   peoples: Person[];
-  onSelected: (person: Person | null) => void;
+  onSelected: (person: Person) => void;
   query: string;
   onQueryChange: (query: string) => void;
+  debounceDelay: number;
 }
 
 const Autocomplete: React.FC<Props> = ({
@@ -14,23 +15,32 @@ const Autocomplete: React.FC<Props> = ({
   onSelected,
   query,
   onQueryChange,
+  debounceDelay = 300,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [debouncedQuery, setDebouncedQuery] = useState(query);
 
-  const filteredPeoples = peoples.filter(person =>
-    person.name.toLowerCase().includes(debouncedQuery.toLowerCase().trim()),
-  );
+  const filteredPeoples = useMemo(() => {
+    const normalizedQuery = debouncedQuery.trim().toLowerCase();
+
+    if (!normalizedQuery) {
+      return peoples;
+    }
+
+    return peoples.filter(person =>
+      person.name.toLowerCase().includes(normalizedQuery),
+    );
+  }, [peoples, debouncedQuery]);
 
   useEffect(() => {
     const timerId = setTimeout(() => {
       setDebouncedQuery(query);
-    }, 300);
+    }, debounceDelay);
 
     return () => {
       clearTimeout(timerId);
     };
-  }, [query]);
+  }, [query, debounceDelay, debouncedQuery]);
 
   const handleSelect = (person: Person) => {
     onSelected(person);
