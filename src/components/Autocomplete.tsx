@@ -48,6 +48,14 @@ const Autocomplete: React.FC<Props> = ({
     setIsOpen(false);
   };
 
+  const handleInputOnFocus = () => {
+    setIsOpen(true);
+  };
+
+  const handleinputBlur = () => {
+    setTimeout(() => setIsOpen(false), 200);
+  };
+
   const showNoResults = isOpen && query && filteredPeoples.length === 0;
 
   return (
@@ -60,9 +68,9 @@ const Autocomplete: React.FC<Props> = ({
             placeholder="Enter a part of the name"
             className="input"
             data-cy="search-input"
-            onFocus={() => setIsOpen(true)}
+            onFocus={handleInputOnFocus}
             onChange={event => onQueryChange(event.target.value)}
-            onBlur={() => setTimeout(() => setIsOpen(false), 200)}
+            onBlur={handleinputBlur}
           />
         </div>
 
