@@ -53,7 +53,7 @@ const Autocomplete: React.FC<Props> = ({
   };
 
   const handleinputBlur = () => {
-    setTimeout(() => setIsOpen(false), 200);
+    setTimeout(() => setIsOpen(false), 500);
   };
 
   const showNoResults = isOpen && query && filteredPeoples.length === 0;
